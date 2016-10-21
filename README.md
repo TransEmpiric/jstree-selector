@@ -17,69 +17,121 @@ Download or checkout the latest copy and include jQuery and jsTree scripts and j
 <script src="dist/jstree.min.js"></script>
 <script src="path/to/jstree-selector.js"></script>
 <div id="jsTree"></div>
-<script>
-$('#jsTree').jstree({
-  "core" : {
-	"html_titles" : true,
-	"animation" : 0,
-	"themes" : { "stripes" : true },
-	"check_callback" : true,
-	'data' : [
-				{
-					"id": "ca-10",
-					"text": "dsfsdf",
-					"parent": "#",
-					"type": "root",
-					"data": {
-						"scoreGroupId": 1
-					}
-				},
-				{
-					"id": "31",
-					"text": "sdfsdf",
-					"parent": "ca-10",
-					"type": "child",
-					"data": {
-						"scoreGroupId": null
-					}
-				},
-				{
-					"id": "39",
-					"text": "jjjjj",
-					"parent": "31",
-					"type": "child",
-					"data": {
-						"scoreGroupId": null
-					}
-				}
-			]
-  },
-  "selector" : {
-	  "options" : [
-		  {"text" : "1", "value" : "1"},
-		  {"text" : "2", "value" : "2"},
-		  {"text" : "3", "value" : "3"}
-	  ],
-	  "param" : "scorGroupId" 
-  },
-  "types" : {
-	"root" : {
-	"icon" : "glyphicon glyphicon-tent",
-	  "valid_children" : ["child"]
-	},
-	"child" : {
-	  "icon" : "glyphicon glyphicon-tag",
-	  "valid_children" : ["child"]
+<script>        
+$scope.buildTree = function() {
+    $http.get(API_URL + 'categoryAttributeType/findAllByCategory', {
+	params: {
+	    categories: [$scope.selectedCategory.enum]
 	}
-  },
-  "plugins" : [
-	"dnd",
-	"state", "types", "wholerow", "selector"
-  ]
-});
+     })
+	.success(function(message, status, headers, config) {
+	    $('#jsTree').jstree({
+		"core": {
+		    "html_titles": true,
+		    "animation": 0,
+		    "themes": {
+			"stripes": true
+		    },
+		    "check_callback": true,
+		    'data': message.data
+		},
+		"selector": {
+		    "rename": {
+			"on": true
+		    },
+		    "remove": {
+			"on": true
+		    },
+		    "add": {
+			"on": true
+		    },
+		    "info": {
+			"on": true
+		    }
+		},
+		"types": {
+		    "USER_RATING_SCALE": {
+			"icon": "glyphicon glyphicon-user",
+			"valid_children": $scope.jsTreeTypes
+		    },
+		    "SELECT": {
+			"icon": "glyphicon glyphicon-th-list",
+			"valid_children": $scope.jsTreeTypes
+		    },
+		    "STRING": {
+			"icon": "glyphicon glyphicon-font",
+			"valid_children": $scope.jsTreeTypes
+		    },
+		    "INTEGER": {
+			"icon": "glyphicon glyphicon-scale",
+			"valid_children": $scope.jsTreeTypes
+		    },
+		    "FLOAT": {
+			"icon": "glyphicon glyphicon-scale",
+			"valid_children": $scope.jsTreeTypes
+		    },
+		    "DATE": {
+			"icon": "glyphicon glyphicon-calendar",
+			"valid_children": $scope.jsTreeTypes
+		    },
+		    "BOOLEAN": {
+			"icon": "glyphicon glyphicon-ok",
+			"valid_children": $scope.jsTreeTypes
+		    },
+		    "URL": {
+			"icon": "glyphicon glyphicon-link",
+			"valid_children": $scope.jsTreeTypes
+		    },
+		},
+		"plugins": [
+		    "state", "types", "wholerow", "selector", "search"
+		]
+	    });
+	    $('#jsTree').unbind("rename_node.jstree " +
+		"click_selector_info.jstree " +
+		"click_selector_create.jstree " +
+		"click_selector_delete.jstree " +
+		"click_selector_edit.jstree " +
+		"delete_node.jstree " +
+		"create_node.jstree " +
+		"change_selector.jstree");
+	    $('#jsTree').on("rename_node.jstree " +
+		"click_selector_info.jstree " +
+		"click_selector_create.jstree " +
+		"click_selector_delete.jstree " +
+		"click_selector_edit.jstree " +
+		"delete_node.jstree " +
+		"create_node.jstree " +
+		"change_selector.jstree",
+		function(event, data, e) {
+		    var type = event.type;
+		    if (type === 'delete_node') {
+			$scope.deleteNode(data.node);
+		    } else if (type === 'rename_node') {
+			$scope.node.id = data.node.id;
+			$scope.node.parent = data.node.parent;
+			$scope.node.name = data.node.text;
+			$scope.node.description = null;
+			$scope.node.code = null;
+			$scope.updateNode();
+		    } else if (type === 'change_selector') {
+			$scope.updateScoreGroup(data, e.val());
+		    } else if (type === 'click_selector_edit') {
+			$scope.renameNode(data);
+		    } else if (type === 'click_selector_delete') {
+			$scope.removeNode(data);
+		    } else if (type === 'click_selector_create') {
+			$scope.newNodeForm(data);
+		    } else if (type === 'click_selector_info') {
+			$scope.showNodeInfo(data);
+		    }
+		});
 
-$('#jsTree').on("change_selector.jstree", function(event, node, element) {
-		//do somehting with the node or element
-});
+	    $(".search-input").keyup(function() {
+		var searchString = $(this).val();
+		$('#jsTree').jstree('search', searchString);
+	    });
+	});
+};
 </script>
 ```
