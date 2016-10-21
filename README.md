@@ -9,13 +9,21 @@ jsTree can display trees by parsing HTML or JSON and supports AJAX, it is themea
     
 ## Getting Started
 
-Download or checkout the latest copy and include jQuery and jsTree scripts and jsTree defualt css as well as jstree-selector.js file in your web page.  I have also included a "jsTree"  div to bind the tree to. 
+Download or checkout the latest copy and include jQuery and jsTree scripts and jsTree defualt css as well as jstree-selector.js file in your web page.  You will also need to include twitter bootstrap for the icons used. I have also included a "jsTree"  div to bind the tree to. 
 
 ```html
 <link rel="stylesheet" href="dist/themes/default/style.css" />
 <script src="dist/libs/jquery.js"></script>
+
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
 <script src="dist/jstree.min.js"></script>
 <script src="path/to/jstree-selector.js"></script>
+
 <div id="jsTree"></div>
 ```
 I am using this with angularJS. Below is an example of a angularJS controller using the plugin.  If you are not using angularJS, just make use of the jsTree init code starting at line 66 below:
